@@ -2,6 +2,7 @@ class MoviesController < ApplicationController
 
   def show
     id = params[:id] # retrieve movie ID from URI route
+    # debugger
     @movie = Movie.find(id) # look up movie by unique ID
     # will render app/views/movies/show.<extension> by default
   end
@@ -42,7 +43,7 @@ class MoviesController < ApplicationController
 
   def create
     @movie = Movie.create!(params[:movie])
-    flash[:notice] = "#{@movie.title} was successfully created."
+    flash[:notice] = "'#{@movie.title}' was successfully created."
     redirect_to movies_path
   end
 
@@ -53,6 +54,7 @@ class MoviesController < ApplicationController
   def update
     @movie = Movie.find params[:id]
     @movie.update_attributes!(params[:movie])
+    # debugger
     flash[:notice] = "#{@movie.title} was successfully updated."
     redirect_to movie_path(@movie)
   end
@@ -62,6 +64,16 @@ class MoviesController < ApplicationController
     @movie.destroy
     flash[:notice] = "Movie '#{@movie.title}' deleted."
     redirect_to movies_path
+  end
+
+  def find_similar
+    @movie = Movie.find params[:id]
+    @similar_movies = @movie.find_similar()
+    debugger
+    if @similar_movies.empty?
+      redirect_to(movies_path, 
+                  :notice => "'#{@movie.title}' has no director info")
+    end
   end
 
 end
